@@ -45,7 +45,6 @@ jobs:
       - name: Clean up decrypted files
         if: always()
         run: |
-          rm -f .env
           rm -f collect_data_all.py
           rm -f collect_data_from_github_action.py
           rm -f collect_data_from_meteora.py
