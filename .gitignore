@@ -1,0 +1,32 @@
+# VSCode
+.vscode/
+
+# Logs
+logs/
+# *.log
+
+# Python
+**/__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.pyc
+*.py
+
+# DS_Store
+**/.DS_Store
+
+# IDE
+*.idea/
+
+# data
+data/csv/
+data/json/
+
+# key
+key.txt
+
+# 指定文件
+notes.txt
+encrypt.sh
+delete_enc.sh

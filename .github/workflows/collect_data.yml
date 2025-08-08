@@ -1,0 +1,64 @@
+name: solana token pool collection
+
+on:
+  # schedule:
+  #   - cron: '*/10 * * * *' #每10分钟运行一次
+  workflow_dispatch: #手动运行
+
+# 为整个工作流的 GITHUB_TOKEN 赋予写入权限
+permissions:
+  contents: write
+
+jobs:
+  collect-data:
+    runs-on: ubuntu-latest
+    steps:
+      
+      - name: Checkout
+        uses: actions/checkout@v3
+        # with:
+        #   ref: github-action
+      
+      - name: Decrypt files
+        # 将密钥作为环境变量传递给运行环境
+        env:
+          DECRYPTION_KEY: ${{ secrets.DECRYPTION_KEY }}
+        run: |
+          # 给予脚本执行权限
+          chmod +x ./decrypt.sh
+          # 执行脚本
+          ./decrypt.sh
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+     
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+      
+      - name: Run data collection
+        run: |
+          python collect_data_from_github_action.py
+      
+      - name: Clean up decrypted files
+        if: always()
+        run: |
+          rm -f .env
+          rm -f collect_data_all.py
+          rm -f collect_data_from_github_action.py
+          rm -f collect_data_from_meteora.py
+          rm -f collect_data_from_raydium.py
+          rm -f clean_files.py
+
+      - name: Push result to repo
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add .
+          git diff --staged --quiet || (timestamp=$(date -u +"%Y-%m-%d %H:%M:%S UTC") && git commit -m "update result by github action at $timestamp" && git push)
+      
+      
+      
+
